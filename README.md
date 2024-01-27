@@ -2,6 +2,10 @@
 
 EndpointMetrics is an application designed to collect and monitor system and network data from your computer.
 
+## Setup
+
+- Refer to the SETUP.md file.
+
 ## Features
 
 - **CPU Data Monitoring:** The application collects and displays real-time CPU data, including load averages, process details, and temperature.
