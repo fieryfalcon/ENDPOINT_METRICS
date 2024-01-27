@@ -1,6 +1,6 @@
-# EndpointMatrix App
+# EndpointMetrics App
 
-EndpointMatrix is an application designed to collect and monitor system and network data from your computer.
+EndpointMetrics is an application designed to collect and monitor system and network data from your computer.
 
 ## Features
 
@@ -8,10 +8,6 @@ EndpointMatrix is an application designed to collect and monitor system and netw
 - **Network Statistics:** EndpointMatrix monitors network statistics such as data transfer, latency, jitter, and packet loss.
 - **Data Storage:** Collected data is stored in an InfluxDB database for historical analysis.
 - **Electron-based GUI:** The application has a graphical user interface built using Electron for ease of use.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Issues and Feedback
 
