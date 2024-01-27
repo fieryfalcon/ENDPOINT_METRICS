@@ -1,0 +1,21 @@
+{
+  "name": "endpointmatrix",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:backend": "cd Backend && npm install",
+    "install:electron": "cd ElectronAssets && npm install",
+    "install:all": "npm run install:backend && npm run install:electron",
+    "start:backend": "cd Backend && npm start",
+    "start:electron": "cd ElectronAssets && npm start",
+    "start": "npm run start:backend & npm run start:electron"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1"
+  }
+}

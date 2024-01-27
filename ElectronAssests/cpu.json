@@ -1,0 +1,13 @@
+{
+  "manufacturer": "AMD",
+  "brand": "Ryzen 5 5500U with Radeon Graphics",
+  "vendor": "AuthenticAMD",
+  "family": "23",
+  "model": "104",
+  "speed": 2.1,
+  "speedMin": 2.1,
+  "speedMax": 2.1,
+  "cores": 12,
+  "physicalCores": 6,
+  "processors": 1
+}

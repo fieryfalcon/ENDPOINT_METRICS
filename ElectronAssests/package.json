@@ -1,0 +1,22 @@
+{
+  "name": "electronassests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.33.2",
+    "electron": "^28.2.0",
+    "fast-speedtest-api": "^0.3.2",
+    "fs": "^0.0.1-security",
+    "influx": "^5.9.3",
+    "ping": "^0.4.4",
+    "systeminformation": "^5.21.24"
+  }
+}
