@@ -8,6 +8,7 @@ const {
   saveStaticCPUData,
   setApp,
 } = require("./cpu");
+const { getStaticRAMData, saveStaticRAMData, getDynamicRAMData, logDynamicRAMData } = require("./ram");
 const { getDynamicNetworkData, logDynamicNetworkData } = require("./network");
 require("dotenv").config();
 console.log("InfluxDB URL:", process.env.INFLUX_URL); // Add this line to check the variable
@@ -29,6 +30,8 @@ app.on("ready", () => {
   const cpuModule = require("./cpu");
   const networkModule = require("./network"); // Import network.js
   cpuModule.setApp(app);
+  const ramModule = require("./ram");
+  ramModule.setApp(app);
 
   // Monitor CPU data every 10 seconds
   setInterval(async () => {
@@ -47,8 +50,21 @@ app.on("ready", () => {
       // Save static data to cpu.json
       saveStaticCPUData(staticData);
 
+      // Get static RAM data (only on app start)
+      if (!app.isRunningFirstTime) return;
+      const staticRAMData = await getStaticRAMData();
+      console.log(staticRAMData, "static ram data");
+
+      saveStaticRAMData(staticRAMData);
+
+      // Get dynamic RAM data
+      const dynamicRAMData = await getDynamicRAMData();
+      console.log(dynamicRAMData, "dynamic ram data");
+      logDynamicRAMData(dynamicRAMData);
+
       // Send dynamic data to the renderer process
       mainWindow.webContents.send("update-cpu-data", dynamicData);
+      mainWindow.webContents.send("update-ram-data", dynamicRAMData);
 
       app.isRunningFirstTime = false;
     } catch (error) {
@@ -61,7 +77,7 @@ app.on("ready", () => {
     try {
       // Get dynamic Network data
       const dynamicNetworkData = await getDynamicNetworkData();
-      console.log(dynamicNetworkData);
+      // console.log(dynamicNetworkData);
       // Log dynamic Network data to InfluxDB via network.js
       logDynamicNetworkData(dynamicNetworkData);
     } catch (error) {
@@ -79,4 +95,10 @@ ipcMain.on("request-static-cpu-data", (event) => {
   // Send static CPU data to the renderer process
   const staticData = getStaticCPUData();
   event.sender.send("response-static-cpu-data", staticData);
+});
+
+ipcMain.on("request-static-ram-data", (event) => {
+  // Send static RAM data to the renderer process
+  const staticRAMData = getStaticRAMData();
+  event.sender.send("response-static-ram-data", staticRAMData);
 });

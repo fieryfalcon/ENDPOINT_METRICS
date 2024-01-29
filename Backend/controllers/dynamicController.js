@@ -31,6 +31,28 @@ async function getCPUQueryData() {
   });
 }
 
+async function getRamQueryData(){
+  let queryClient = client.getQueryApi(org);
+  let fluxQuery = `from(bucket: "RAM_LOGS")
+  |> range(start: -1m)`;
+  return new Promise((resolve, reject) => {
+    const result = [];
+    queryClient.queryRows(fluxQuery, {
+      next: (row, tableMeta) => {
+        const tableObject = tableMeta.toObject(row);
+        result.push(tableObject);
+      },
+      error: (error) => {
+        console.error("\nError", error);
+        reject(error);
+      },
+      complete: () => {
+        resolve(result);
+      },
+    });
+  });
+}
+
 // Function to get dynamic CPU data from InfluxDB
 async function getCpuData(req, res) {
   try {
@@ -42,6 +64,17 @@ async function getCpuData(req, res) {
   }
 }
 
+async function getRamData(req, res) {
+  try {
+    const data = await getRamQueryData();
+    res.json({ data });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+}
+
 module.exports = {
   getCpuData,
+  getRamData,
 };
