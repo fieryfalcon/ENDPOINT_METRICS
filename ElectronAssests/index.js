@@ -44,48 +44,7 @@ app.on("ready", () => {
   ramModule.setApp(app);
   connectedDevicesModule.setApp(app);
 
-  // Monitor CPU data every 10 seconds
-  // setInterval(async () => {
-  //   try {
-  //     // Get dynamic CPU data
-  //     const dynamicData = await getDynamicCPUData();
-  //     console.log(dynamicData);
-  //     // Log dynamic data to InfluxDB via cpu.js
-  //     logDynamicCPUData(dynamicData);
-
-  //     // Get static CPU data (only on app start)
-  //     if (!app.isRunningFirstTime) return;
-  //     const staticData = await getStaticCPUData();
-  //     console.log(staticData);
-
-  //     // Save static data to cpu.json
-  //     saveStaticCPUData(staticData);
-
-  //     // Get static RAM data (only on app start)
-  //     // if (!app.isRunningFirstTime) return;
-  //     const staticRAMData = await getStaticRAMData();
-  //     // console.log(staticRAMData, "static ram data");
-
-  //     saveStaticRAMData(staticRAMData);
-
-  //     // if(!app.isRunningFirstTime) return;
-  //     const connectedDevicesData =  getConnectedDevicesData();
-  //     console.log(connectedDevicesData, "connected devices data");
-  //     // Get dynamic RAM data
-  //     const dynamicRAMData = await getDynamicRAMData();
-  //     console.log(dynamicRAMData, "dynamic ram data");
-  //     logDynamicRAMData(dynamicRAMData);
-
-  //     // Send dynamic data to the renderer process
-  //     mainWindow.webContents.send("update-cpu-data", dynamicData);
-  //     mainWindow.webContents.send("update-ram-data", dynamicRAMData);
-  //     mainWindow.webContents.send("update-CD-data", connectedDevicesData);
-
-  //     app.isRunningFirstTime = false;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // }, 15000);
+  
 
   // Commented for now
   // Monitor Network data every 1 second
@@ -159,6 +118,61 @@ ipcMain.on(IPC_MESSAGES.REGISTER, async () => {
 
   mainWindow.webContents.send(IPC_MESSAGES.REGISTER, "registered from index.js line161");
 });
+
+ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
+
+// Monitor CPU data every 10 seconds
+  intervalId = setInterval(async () => {
+    try {
+  //     // Get dynamic CPU data
+      const dynamicData = await getDynamicCPUData();
+  //     console.log(dynamicData);
+  //     // Log dynamic data to InfluxDB via cpu.js
+      logDynamicCPUData(dynamicData);
+
+  //     // Get static CPU data (only on app start)
+      // if (!app.isRunningFirstTime) return;
+      const staticData = await getStaticCPUData();
+      console.log(staticData);
+
+  //     // Save static data to cpu.json
+      saveStaticCPUData(staticData);
+
+  //     // Get static RAM data (only on app start)
+      // if (!app.isRunningFirstTime) return;
+      const staticRAMData = await getStaticRAMData();
+  //     // console.log(staticRAMData, "static ram data");
+
+      saveStaticRAMData(staticRAMData);
+
+  //     // if(!app.isRunningFirstTime) return;
+      const connectedDevicesData =  getConnectedDevicesData();
+  //     console.log(connectedDevicesData, "connected devices data");
+  //     // Get dynamic RAM data
+      const dynamicRAMData = await getDynamicRAMData();
+  //     console.log(dynamicRAMData, "dynamic ram data");
+      logDynamicRAMData(dynamicRAMData);
+
+  //     // Send dynamic data to the renderer process
+      mainWindow.webContents.send("update-cpu-data", dynamicData);
+      mainWindow.webContents.send("update-ram-data", dynamicRAMData);
+      mainWindow.webContents.send("update-CD-data", connectedDevicesData);
+
+      app.isRunningFirstTime = false;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, 10000);
+
+});
+
+ipcMain.on(IPC_MESSAGES.STOP_MONITORING, async () => {
+  if(intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;  
+  };
+});
+
 
 ipcMain.on('TEST', async () => {
   await mainWindow.loadFile(path.join(__dirname, "./register.html"));

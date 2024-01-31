@@ -64,15 +64,15 @@ regBtn.addEventListener('click', () => {
     window.renderer.sendRegisterMessage();
 });
 
-// startBtn.addEventListener('click', () => {
-//     console.log('Monitoring...');
-//     window.renderer.sendStartMonitorMessage();
-// });
+startBtn.addEventListener('click', () => {
+    console.log('Monitoring...');
+    window.renderer.sendStartMonitorMessage();
+});
 
-// stopBtn.addEventListener('click', () => {
-//     console.log('Stopped!');
-//     window.renderer.sendStopMonitorMessage();
-// });
+stopBtn.addEventListener('click', () => {
+    console.log('Stopped!');
+    window.renderer.sendStopMonitorMessage();
+});
 
 regBtn.addEventListener('click', () => {
     window.renderer.sendTestMessage();

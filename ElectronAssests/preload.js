@@ -1,4 +1,4 @@
-const {contextBridge, ipcRenderer} = require('electron');
+const {contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('renderer', {
     sendLoginMessage: () => {
@@ -17,10 +17,10 @@ contextBridge.exposeInMainWorld('renderer', {
         ipcRenderer.on('SHOW_WELCOME_MESSAGE', (event, ...args) => func(event, ...args));
     },
     sendStartMonitorMessage: () => {
-        ipcRenderer.on('START_MONITORING', (event, ...args) => func(event, ...args));
+        ipcRenderer.send('START_MONITORING');
     },
     sendStopMonitorMessage: () => {
-        ipcRenderer.on('STOP_MONITORING', (event, ...args) => func(event, ...args));
+        ipcRenderer.send('STOP_MONITORING');
     },
     sendRegisterMessage: () => {
         ipcRenderer.on('REGISTER', (event, ...args) => func(event, ...args));
