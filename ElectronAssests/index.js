@@ -26,10 +26,7 @@ app.on("ready", () => {
     },
   });
 
-  win.loadURL("http://localhost:3000");
-
-  // // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.loadFile("index.html");
 
   const cpuModule = require("./cpu");
   const networkModule = require("./network"); // Import network.js
