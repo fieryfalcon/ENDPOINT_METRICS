@@ -11,11 +11,15 @@ const {
 const { getStaticRAMData, saveStaticRAMData, getDynamicRAMData, logDynamicRAMData } = require("./ram");
 const {getConnectedDevicesData} = require("./connectedDevices");
 const { getDynamicNetworkData, logDynamicNetworkData } = require("./network");
+const AuthProvider = require("./AuthProvider");
+const { IPC_MESSAGES } = require("./constants");
+const { protectedResources, msalConfig } = require("./authConfig");
+const getGraphClient = require("./graph");
 require("dotenv").config();
-console.log("InfluxDB URL:", process.env.INFLUX_URL); // Add this line to check the variable
-// Import network.js
+
 
 let mainWindow;
+let authProvider;
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -23,8 +27,11 @@ app.on("ready", () => {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  authProvider = new AuthProvider(msalConfig);
 
   mainWindow.loadFile("index.html");
 
@@ -79,18 +86,19 @@ app.on("ready", () => {
     }
   }, 15000);
 
+  // Commented for now
   // Monitor Network data every 1 second
-  setInterval(async () => {
-  try {
-  // Get dynamic Network data
-  const dynamicNetworkData = await getDynamicNetworkData();
-  // console.log(dynamicNetworkData);
-  // Log dynamic Network data to InfluxDB via network.js
-  logDynamicNetworkData(dynamicNetworkData);
-  } catch (error) {
-  console.error("Error:", error);
-  }
-  }, 1000);
+  // setInterval(async () => {
+  // try {
+  // // Get dynamic Network data
+  // const dynamicNetworkData = await getDynamicNetworkData();
+  // // console.log(dynamicNetworkData);
+  // // Log dynamic Network data to InfluxDB via network.js
+  // logDynamicNetworkData(dynamicNetworkData);
+  // } catch (error) {
+  // console.error("Error:", error);
+  // }
+  // }, 1000);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -108,4 +116,36 @@ ipcMain.on("request-static-ram-data", (event) => {
   // Send static RAM data to the renderer process
   const staticRAMData = getStaticRAMData();
   event.sender.send("response-static-ram-data", staticRAMData);
+});
+
+//Event Handlers for Auth
+
+ipcMain.on(IPC_MESSAGES.LOGIN, async () => {
+  const account = await authProvider.login();
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+  mainWindow.webContents.send(IPC_MESSAGES.SHOW_WELCOME_MESSAGE, account);
+});
+
+ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {
+  await authProvider.logout();
+
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+});
+
+ipcMain.on(IPC_MESSAGES.GET_PROFILE, async () => {
+  const tokenRequest = {
+    scopes: protectedResources.graphMe.scopes,
+  };
+
+  const tokenResponse = await authProvider.getToken(tokenRequest);
+  const account = authProvider.account;
+
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+
+  const graphResponse = await getGraphClient(tokenResponse.accessToken)
+    .api(protectedResources.graphMe.endpoint)
+    .get();
+
+  mainWindow.webContents.send(IPC_MESSAGES.SHOW_WELCOME_MESSAGE, account);
+  mainWindow.webContents.send(IPC_MESSAGES.SET_PROFILE, graphResponse);
 });
