@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { app, BrowserWindow, ipcMain } = require("electron");
+const {net} = require("electron");
 const path = require("path");
 const {
   getStaticCPUData,
@@ -44,47 +45,47 @@ app.on("ready", () => {
   connectedDevicesModule.setApp(app);
 
   // Monitor CPU data every 10 seconds
-  setInterval(async () => {
-    try {
-      // Get dynamic CPU data
-      const dynamicData = await getDynamicCPUData();
-      console.log(dynamicData);
-      // Log dynamic data to InfluxDB via cpu.js
-      logDynamicCPUData(dynamicData);
+  // setInterval(async () => {
+  //   try {
+  //     // Get dynamic CPU data
+  //     const dynamicData = await getDynamicCPUData();
+  //     console.log(dynamicData);
+  //     // Log dynamic data to InfluxDB via cpu.js
+  //     logDynamicCPUData(dynamicData);
 
-      // Get static CPU data (only on app start)
-      if (!app.isRunningFirstTime) return;
-      const staticData = await getStaticCPUData();
-      console.log(staticData);
+  //     // Get static CPU data (only on app start)
+  //     if (!app.isRunningFirstTime) return;
+  //     const staticData = await getStaticCPUData();
+  //     console.log(staticData);
 
-      // Save static data to cpu.json
-      saveStaticCPUData(staticData);
+  //     // Save static data to cpu.json
+  //     saveStaticCPUData(staticData);
 
-      // Get static RAM data (only on app start)
-      // if (!app.isRunningFirstTime) return;
-      const staticRAMData = await getStaticRAMData();
-      // console.log(staticRAMData, "static ram data");
+  //     // Get static RAM data (only on app start)
+  //     // if (!app.isRunningFirstTime) return;
+  //     const staticRAMData = await getStaticRAMData();
+  //     // console.log(staticRAMData, "static ram data");
 
-      saveStaticRAMData(staticRAMData);
+  //     saveStaticRAMData(staticRAMData);
 
-      // if(!app.isRunningFirstTime) return;
-      const connectedDevicesData =  getConnectedDevicesData();
-      console.log(connectedDevicesData, "connected devices data");
-      // Get dynamic RAM data
-      const dynamicRAMData = await getDynamicRAMData();
-      console.log(dynamicRAMData, "dynamic ram data");
-      logDynamicRAMData(dynamicRAMData);
+  //     // if(!app.isRunningFirstTime) return;
+  //     const connectedDevicesData =  getConnectedDevicesData();
+  //     console.log(connectedDevicesData, "connected devices data");
+  //     // Get dynamic RAM data
+  //     const dynamicRAMData = await getDynamicRAMData();
+  //     console.log(dynamicRAMData, "dynamic ram data");
+  //     logDynamicRAMData(dynamicRAMData);
 
-      // Send dynamic data to the renderer process
-      mainWindow.webContents.send("update-cpu-data", dynamicData);
-      mainWindow.webContents.send("update-ram-data", dynamicRAMData);
-      mainWindow.webContents.send("update-CD-data", connectedDevicesData);
+  //     // Send dynamic data to the renderer process
+  //     mainWindow.webContents.send("update-cpu-data", dynamicData);
+  //     mainWindow.webContents.send("update-ram-data", dynamicRAMData);
+  //     mainWindow.webContents.send("update-CD-data", connectedDevicesData);
 
-      app.isRunningFirstTime = false;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, 15000);
+  //     app.isRunningFirstTime = false;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }, 15000);
 
   // Commented for now
   // Monitor Network data every 1 second
@@ -100,16 +101,19 @@ app.on("ready", () => {
   // }
   // }, 1000);
 
+
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 });
 
 // IPC listener in the main process
-ipcMain.on("request-static-cpu-data", (event) => {
+ipcMain.on(IPC_MESSAGES.START_MONITORING, (event) => {
   // Send static CPU data to the renderer process
   const staticData = getStaticCPUData();
   event.sender.send("response-static-cpu-data", staticData);
+  console.log("Monitoring started from main process");
 });
 
 ipcMain.on("request-static-ram-data", (event) => {
@@ -148,4 +152,38 @@ ipcMain.on(IPC_MESSAGES.GET_PROFILE, async () => {
 
   mainWindow.webContents.send(IPC_MESSAGES.SHOW_WELCOME_MESSAGE, account);
   mainWindow.webContents.send(IPC_MESSAGES.SET_PROFILE, graphResponse);
+});
+
+ipcMain.on(IPC_MESSAGES.REGISTER, async () => {
+  await mainWindow.loadFile(path.join(__dirname, "./register.html"));
+
+  mainWindow.webContents.send(IPC_MESSAGES.REGISTER, "registered from index.js line161");
+});
+
+ipcMain.on('TEST', async () => {
+  await mainWindow.loadFile(path.join(__dirname, "./register.html"));
+  console.log("test from index.js line161");
+  try {
+    const data = fetch("https://jsonplaceholder.typicode.com/todos/1")
+    .then(response => response.json())
+    .then(json => console.log(json))
+    
+    // mainWindow.webContents.send(IPC_MESSAGES.TEST, data, "test from index.js line161");
+  } catch (error) {
+    console.log(error, "ERR");
+  }
+});
+
+ipcMain.on('SUBMIT', async (param) => {
+  // await mainWindow.loadFile(path.join(__dirname, "./register.html"));
+  console.log("submit from index.js ");
+  try {
+    const data = fetch("https://jsonplaceholder.typicode.com/todos/1")
+    .then(response => response.json())
+    .then(json => console.log(json,"dfdf",param))
+    
+    // mainWindow.webContents.send(IPC_MESSAGES.TEST, data, "test from index.js line161");
+  } catch (error) {
+    console.log(error, "ERRor");
+  }
 });

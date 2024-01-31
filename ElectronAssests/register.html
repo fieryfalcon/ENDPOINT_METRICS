@@ -13,22 +13,26 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand">Endpoint Metrics</a>
+        <a class="navbar-brand">Register</a>
         <div class="btn-group ml-auto dropleft">
-            <button type="button" id="signIn" class="btn btn-secondary" aria-expanded="false">
-                Sign in
+            <button type="button" id="signIn"  class="btn btn-secondary" aria-expanded="false">
+                Back
             </button>
             <button type="button" id="signOut" class="btn btn-success" hidden aria-expanded="false">
                 Sign out
-            </button>
-            <button type="button" id="back" class="btn btn-secondary" hidden aria-expanded="false">
-                Back
             </button>
         </div>
     </nav>
     <br>
     <!-- <h5 class="card-header text-center">Click on Sign In</h5> -->
-    <!-- <button class="btn btn-primary" id="testBtn">Test</button> -->
+    <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="">Enter your given Parameter</span>
+        </div>
+        <input type="text" id="textBox" class="form-control">
+      </div>
+    <button class="btn btn-primary" hidden id="testBtn">Test</button>
+    <button class="btn btn-primary" id="submitBtn">Submit</button>
     <br>
     <div class="row" style="margin:auto">
         <div id="cardDiv" class="col-md-6" style="display:none; margin:auto">

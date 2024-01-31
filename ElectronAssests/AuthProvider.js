@@ -1,5 +1,7 @@
 const { PublicClientApplication, InteractionRequiredAuthError } = require('@azure/msal-node');
-const { shell } = require('electron');
+const { shell, safeStorage } = require('electron');
+const Store = require('electron-store');
+const store = new Store();
 
 class AuthProvider {
     msalConfig
@@ -24,7 +26,10 @@ class AuthProvider {
             // by default, MSAL will add the OIDC scopes to every token request, so we omit those here
             scopes: [],
         });
-
+        //Saving access token to store
+        store.set('token', authResponse.accessToken);
+        console.log('store token', store.get('token'));
+        
         return this.handleResponse(authResponse);
     }
 
