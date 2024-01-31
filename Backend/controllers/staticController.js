@@ -21,6 +21,16 @@ try {
   console.error("Error reading static RAM data:", error);
 }
 
+// Read the 'devices.json' file for static data
+const devicesDataPath = path.join(__dirname, "../../ElectronAssests/devices.json");
+let staticDevicesData = {};
+
+try {
+  staticDevicesData = JSON.parse(fs.readFileSync(devicesDataPath, "utf-8"));
+} catch (error) {
+  console.error("Error reading static Devices data:", error);
+}
+
 // Function to get static CPU data
 function getCpuData(req, res) {
   res.json(staticCPUData);
@@ -31,7 +41,13 @@ function getRamData(req, res) {
   res.json(staticRAMData);
 }
 
+// Function to get static Devices data
+function getDevicesData(req, res) {
+  res.json(staticDevicesData);
+}
+
 module.exports = {
   getCpuData,
   getRamData,
+  getDevicesData,
 };

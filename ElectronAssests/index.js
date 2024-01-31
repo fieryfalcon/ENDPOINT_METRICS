@@ -9,6 +9,7 @@ const {
   setApp,
 } = require("./cpu");
 const { getStaticRAMData, saveStaticRAMData, getDynamicRAMData, logDynamicRAMData } = require("./ram");
+const {getConnectedDevicesData} = require("./connectedDevices");
 const { getDynamicNetworkData, logDynamicNetworkData } = require("./network");
 require("dotenv").config();
 console.log("InfluxDB URL:", process.env.INFLUX_URL); // Add this line to check the variable
@@ -29,9 +30,11 @@ app.on("ready", () => {
 
   const cpuModule = require("./cpu");
   const networkModule = require("./network"); // Import network.js
-  cpuModule.setApp(app);
   const ramModule = require("./ram");
+  const connectedDevicesModule = require("./connectedDevices");
+  cpuModule.setApp(app);
   ramModule.setApp(app);
+  connectedDevicesModule.setApp(app);
 
   // Monitor CPU data every 10 seconds
   setInterval(async () => {
@@ -51,12 +54,15 @@ app.on("ready", () => {
       saveStaticCPUData(staticData);
 
       // Get static RAM data (only on app start)
-      if (!app.isRunningFirstTime) return;
+      // if (!app.isRunningFirstTime) return;
       const staticRAMData = await getStaticRAMData();
-      console.log(staticRAMData, "static ram data");
+      // console.log(staticRAMData, "static ram data");
 
       saveStaticRAMData(staticRAMData);
 
+      // if(!app.isRunningFirstTime) return;
+      const connectedDevicesData =  getConnectedDevicesData();
+      console.log(connectedDevicesData, "connected devices data");
       // Get dynamic RAM data
       const dynamicRAMData = await getDynamicRAMData();
       console.log(dynamicRAMData, "dynamic ram data");
@@ -65,24 +71,25 @@ app.on("ready", () => {
       // Send dynamic data to the renderer process
       mainWindow.webContents.send("update-cpu-data", dynamicData);
       mainWindow.webContents.send("update-ram-data", dynamicRAMData);
+      mainWindow.webContents.send("update-CD-data", connectedDevicesData);
 
       app.isRunningFirstTime = false;
     } catch (error) {
       console.error("Error:", error);
     }
-  }, 10000);
+  }, 15000);
 
   // Monitor Network data every 1 second
   setInterval(async () => {
-    try {
-      // Get dynamic Network data
-      const dynamicNetworkData = await getDynamicNetworkData();
-      // console.log(dynamicNetworkData);
-      // Log dynamic Network data to InfluxDB via network.js
-      logDynamicNetworkData(dynamicNetworkData);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  try {
+  // Get dynamic Network data
+  const dynamicNetworkData = await getDynamicNetworkData();
+  // console.log(dynamicNetworkData);
+  // Log dynamic Network data to InfluxDB via network.js
+  logDynamicNetworkData(dynamicNetworkData);
+  } catch (error) {
+  console.error("Error:", error);
+  }
   }, 1000);
 
   mainWindow.on("closed", () => {
