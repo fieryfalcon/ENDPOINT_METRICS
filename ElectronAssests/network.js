@@ -73,6 +73,8 @@ async function calculateJitterAndLatency() {
 async function getDynamicNetworkData() {
   try {
     const inetLatency = await si.inetLatency();
+    const Interfaces = await si.networkInterfaces("default");
+    // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
     const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
     const downloadSpeed = await speedTest.getSpeed();
@@ -81,6 +83,7 @@ async function getDynamicNetworkData() {
     const packetLossPercentage = await calculatePacketLoss();
 
     return {
+      Interfaces: Interfaces,
       inetLatency: inetLatency,
       iface: networkStats[0].iface,
       rx_bytes: networkStats[0].rx_bytes || 0,

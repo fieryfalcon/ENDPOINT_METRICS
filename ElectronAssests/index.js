@@ -8,7 +8,9 @@ const {
   saveStaticCPUData,
   setApp,
 } = require("./cpu");
+const { getSystemInfo, saveSystemInfoToFile } = require("./system");
 const { getDynamicNetworkData, logDynamicNetworkData } = require("./network");
+const { getMemoryInfo, saveMemoryInfoToFile } = require("./memory");
 require("dotenv").config();
 console.log("InfluxDB URL:", process.env.INFLUX_URL); // Add this line to check the variable
 // Import network.js
@@ -24,7 +26,10 @@ app.on("ready", () => {
     },
   });
 
-  mainWindow.loadFile("index.html");
+  win.loadURL("http://localhost:3000");
+
+  // // Open the DevTools.
+  // mainWindow.webContents.openDevTools();
 
   const cpuModule = require("./cpu");
   const networkModule = require("./network"); // Import network.js
@@ -39,12 +44,17 @@ app.on("ready", () => {
       // Log dynamic data to InfluxDB via cpu.js
       logDynamicCPUData(dynamicData);
 
-      // Get static CPU data (only on app start)
       if (!app.isRunningFirstTime) return;
+      getSystemInfo().then((systemInfo) => {
+        if (systemInfo !== null) {
+          console.log("System Information:", systemInfo);
+        }
+      });
+
+      saveSystemInfoToFile();
+
       const staticData = await getStaticCPUData();
       console.log(staticData);
-
-      // Save static data to cpu.json
       saveStaticCPUData(staticData);
 
       // Send dynamic data to the renderer process
@@ -55,6 +65,19 @@ app.on("ready", () => {
       console.error("Error:", error);
     }
   }, 10000);
+
+  setInterval(async () => {
+    try {
+      getMemoryInfo().then((memoryInfo) => {
+        if (memoryInfo !== null) {
+          console.log("MemoryInfo", memoryInfo);
+        }
+      });
+      saveMemoryInfoToFile();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, 1000000);
 
   // Monitor Network data every 1 second
   setInterval(async () => {
@@ -67,7 +90,7 @@ app.on("ready", () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  }, 1000);
+  }, 5000);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
