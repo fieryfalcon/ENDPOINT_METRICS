@@ -7,4 +7,7 @@ router.get("/cpu-data", staticController.getCpuData);
 router.get("/system-data", staticController.getSystemData);
 router.get("/memory-data", staticController.getMemoryData);
 
+// Route to get static RAM data
+router.get("/ram-data", staticController.getRamData);
+
 module.exports = router;

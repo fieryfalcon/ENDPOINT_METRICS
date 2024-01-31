@@ -1,0 +1,93 @@
+{
+  "audioDevices": [
+    {
+      "id": "HDAUDIO\\FUNC_01&VEN_1002&DEV_AA01&SUBSYS_00AA0100&REV_1007\\5&11B2A54D&0&0001",
+      "name": "AMD High Definition Audio Device",
+      "manufacturer": "Advanced Micro Devices",
+      "revision": null,
+      "driver": null,
+      "default": null,
+      "channel": null,
+      "type": "Sound Driver",
+      "in": null,
+      "out": null,
+      "status": "3"
+    },
+    {
+      "id": "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0257&SUBSYS_17AA38BB&REV_1000\\5&2C0DA5D1&0&0001",
+      "name": "Realtek High Definition Audio",
+      "manufacturer": "Realtek",
+      "revision": null,
+      "driver": null,
+      "default": null,
+      "channel": null,
+      "type": "Sound Driver",
+      "in": null,
+      "out": null,
+      "status": "3"
+    }
+  ],
+  "connectedBTDevices": [],
+  "usbDevices": [
+    {
+      "bus": null,
+      "deviceId": "PCI\\VEN_1022&DEV_1639&SUBSYS_16391022&REV_00\\4&1185D5E4&0&0341",
+      "id": 1,
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "type": "Controller",
+      "removable": null,
+      "vendor": null,
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "maxPower": null,
+      "serialNumber": null
+    },
+    {
+      "bus": null,
+      "deviceId": "PCI\\VEN_1022&DEV_1639&SUBSYS_16391022&REV_00\\4&1185D5E4&0&0441",
+      "id": 2,
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "type": "Controller",
+      "removable": null,
+      "vendor": null,
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "maxPower": null,
+      "serialNumber": null
+    },
+    {
+      "bus": null,
+      "deviceId": "USB\\ROOT_HUB30\\5&2117F98D&0&0",
+      "id": 3,
+      "name": "USB Root Hub (USB 3.0)",
+      "type": "Hub",
+      "removable": null,
+      "vendor": null,
+      "manufacturer": "",
+      "maxPower": null,
+      "serialNumber": null
+    },
+    {
+      "bus": null,
+      "deviceId": "USB\\ROOT_HUB30\\5&1E9A8D0&0&0",
+      "id": 4,
+      "name": "USB Root Hub (USB 3.0)",
+      "type": "Hub",
+      "removable": null,
+      "vendor": null,
+      "manufacturer": "",
+      "maxPower": null,
+      "serialNumber": null
+    },
+    {
+      "bus": null,
+      "deviceId": "USB\\VID_5986&PID_2137\\6&7C37FDC&0&3",
+      "id": 5,
+      "name": "USB Composite Device",
+      "type": "Hub",
+      "removable": null,
+      "vendor": null,
+      "manufacturer": "",
+      "maxPower": null,
+      "serialNumber": null
+    }
+  ]
+}
