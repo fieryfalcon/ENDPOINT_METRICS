@@ -30,6 +30,9 @@ require("dotenv").config();
 
 let mainWindow;
 let authProvider;
+let dataCache = [];
+const clientId = store.get("AppId");
+const secretKey = store.get("ClientSecret");
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -51,20 +54,6 @@ app.on("ready", () => {
   cpuModule.setApp(app);
   ramModule.setApp(app);
   connectedDevicesModule.setApp(app);
-
-  // Commented for now
-  // Monitor Network data every 1 second
-  setInterval(async () => {
-    try {
-      // Get dynamic Network data
-      const dynamicNetworkData = await getDynamicNetworkData();
-      console.log(dynamicNetworkData);
-      // Log dynamic Network data to InfluxDB via network.js
-      logDynamicNetworkData(dynamicNetworkData);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, 5000);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -148,36 +137,65 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
   // Monitor CPU data every 10 seconds
   intervalId = setInterval(async () => {
     try {
-      //     // Get dynamic CPU data
       const dynamicData = await getDynamicCPUData();
-      //     console.log(dynamicData);
-      //     // Log dynamic data to InfluxDB via cpu.js
       logDynamicCPUData(dynamicData);
-
-      //     // Get static CPU data (only on app start)
-      // if (!app.isRunningFirstTime) return;
       const staticData = await getStaticCPUData();
-      console.log(staticData);
-
-      //     // Save static data to cpu.json
       saveStaticCPUData(staticData);
 
-      //     // Get static RAM data (only on app start)
-      // if (!app.isRunningFirstTime) return;
-      const staticRAMData = await getStaticRAMData();
-      //     // console.log(staticRAMData, "static ram data");
+      const dynamicNetworkData = await getDynamicNetworkData();
+      logDynamicNetworkData(dynamicNetworkData);
 
+      const staticRAMData = await getStaticRAMData();
+      const dynamicRAMData = await getDynamicRAMData();
+      const memoryInfo = await getMemoryInfo();
+      const systemInfo = await getSystemInfo();
+      logDynamicRAMData(dynamicRAMData);
       saveStaticRAMData(staticRAMData);
 
-      //     // if(!app.isRunningFirstTime) return;
-      const connectedDevicesData = getConnectedDevicesData();
-      //     console.log(connectedDevicesData, "connected devices data");
-      //     // Get dynamic RAM data
-      const dynamicRAMData = await getDynamicRAMData();
-      //     console.log(dynamicRAMData, "dynamic ram data");
-      logDynamicRAMData(dynamicRAMData);
+      saveSystemInfoToFile();
+      saveMemoryInfoToFile();
 
-      //     // Send dynamic data to the renderer process
+      const connectedDevicesData = await getConnectedDevicesData();
+
+      dataCache.push({
+        CPUdata: dynamicData,
+        NetworkData: dynamicNetworkData,
+        RAMData: dynamicRAMData,
+        CDData: connectedDevicesData,
+        CPUstaticData: staticData,
+        RAMstaticData: staticRAMData,
+        MemoryInfo: memoryInfo,
+        SystemInfo: systemInfo,
+        timestamp: new Date(),
+      });
+
+      if (dataCache.length >= 4) {
+        const body = JSON.stringify({
+          dataCache,
+          secretKey,
+          clientId,
+        });
+
+        fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
+          // replace with your URL
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            dataCache = [];
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      console.log(dataCache);
+      console.log(dataCache.length);
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
       mainWindow.webContents.send("update-cpu-data", dynamicData);
       mainWindow.webContents.send("update-ram-data", dynamicRAMData);
       mainWindow.webContents.send("update-CD-data", connectedDevicesData);
@@ -191,6 +209,7 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
 
 ipcMain.on(IPC_MESSAGES.STOP_MONITORING, async () => {
   if (intervalId) {
+    console.log("Monitoring stopped from main process");
     clearInterval(intervalId);
     intervalId = null;
   }
