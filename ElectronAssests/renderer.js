@@ -126,11 +126,13 @@ if (submitBtn) {
   submitBtn.addEventListener("click", async () => {
     const userPrincipalName = await getUserName();
     const MStoken = await getToken();
+    const tenantid = await gettenantid();
 
     // Construct the URL with query parameters
     const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
     apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
     apiUrl.searchParams.append("MStoken", MStoken);
+    apiUrl.searchParams.append("tenantid", tenantid);
 
     // Make the GET request
     fetch(apiUrl)

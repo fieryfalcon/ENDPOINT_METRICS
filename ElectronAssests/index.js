@@ -33,6 +33,7 @@ let authProvider;
 let dataCache = [];
 const clientId = store.get("AppId");
 const secretKey = store.get("ClientSecret");
+const Tenant_id = store.get("tenant-id");
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -138,18 +139,18 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
   intervalId = setInterval(async () => {
     try {
       const dynamicData = await getDynamicCPUData();
-      logDynamicCPUData(dynamicData);
+      // logDynamicCPUData(dynamicData);
       const staticData = await getStaticCPUData();
       saveStaticCPUData(staticData);
 
       const dynamicNetworkData = await getDynamicNetworkData();
-      logDynamicNetworkData(dynamicNetworkData);
+      // logDynamicNetworkData(dynamicNetworkData);
 
       const staticRAMData = await getStaticRAMData();
       const dynamicRAMData = await getDynamicRAMData();
       const memoryInfo = await getMemoryInfo();
       const systemInfo = await getSystemInfo();
-      logDynamicRAMData(dynamicRAMData);
+      // logDynamicRAMData(dynamicRAMData);
       saveStaticRAMData(staticRAMData);
 
       saveSystemInfoToFile();
@@ -174,10 +175,10 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
           dataCache,
           secretKey,
           clientId,
+          Tenant_id,
         });
 
         fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
-          // replace with your URL
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -191,10 +192,6 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
           })
           .catch((error) => console.error("Error:", error));
       }
-
-      console.log(dataCache);
-      console.log(dataCache.length);
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
       mainWindow.webContents.send("update-cpu-data", dynamicData);
       mainWindow.webContents.send("update-ram-data", dynamicRAMData);
