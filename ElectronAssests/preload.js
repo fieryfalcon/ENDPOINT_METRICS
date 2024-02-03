@@ -34,6 +34,12 @@ contextBridge.exposeInMainWorld("renderer", {
   updateCPU: (func) => {
     ipcRenderer.on("update-cpu-data", (event, ...args) => func(event, ...args));
   },
+  updateRAM: (func) => {
+    ipcRenderer.on("update-ram-data", (event, ...args) => func(event, ...args));
+  },
+  updateCD: (func) => {
+    ipcRenderer.on("update-cd-data", (event, ...args) => func(event, ...args));
+  },
   sendStartMonitorMessage: () => {
     ipcRenderer.send("START_MONITORING");
   },

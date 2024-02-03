@@ -9,6 +9,8 @@ const startBtn = document.getElementById("startMonitor");
 const stopBtn = document.getElementById("stopMonitor");
 const cardDiv = document.getElementById("cardDiv");
 const sCardDiv = document.getElementById("secondCardDiv");
+const ramDiv = document.getElementById("ramCardDiv");
+const cdDiv = document.getElementById("cdCardDiv");
 const regBtn = document.getElementById("register");
 const profileDiv = document.getElementById("profileDiv");
 const test = document.getElementById("testBtn");
@@ -59,6 +61,8 @@ window.renderer.showWelcomeMessage((event, account) => {
 
   cardDiv.style.display = "initial";
   sCardDiv.style.display = "initial";
+  ramDiv.style.display = "initial";
+  cdDiv.style.display = "initial";
   welcomeDiv.innerHTML = `Welcome ${account.name}!`;
   signInButton.hidden = true;
   signOutButton.hidden = false;
@@ -66,8 +70,21 @@ window.renderer.showWelcomeMessage((event, account) => {
 
 window.renderer.updateCPU((event, cpuData) => {
   if (!cpuData) {console.log("nodata ")};
+  document.getElementById("getCPUData").textContent = JSON.stringify(cpuData);
+  // console.log("CPU Data: ", cpuData);
+});
 
-  console.log("CPU Data: ", cpuData);
+window.renderer.updateRAM((event, ramData) => {
+  if (!ramData) {
+    document.getElementById("getRAMData").textContent = "No Data Available";
+  }
+  document.getElementById("getRAMData").textContent = JSON.stringify(ramData);
+  // console.log("RAM Data: ", ramData);
+});
+
+window.renderer.updateCD((event, cdData) => {
+  if (!cdData) return;
+  document.getElementById("getCDData").textContent = JSON.stringify(cdData);
 });
 
 window.renderer.handleProfileData((event, graphResponse) => {
@@ -110,74 +127,74 @@ seeProfileButton.addEventListener("click", () => {
   window.renderer.sendSeeProfileMessage();
 });
 
-regBtn.addEventListener("click", () => {
-  window.renderer.sendRegisterMessage();
-});
+// regBtn.addEventListener("click", () => {
+//   window.renderer.sendRegisterMessage();
+// });
 
-startBtn.addEventListener("click", () => {
-  console.log("Monitoring...");
-  window.renderer.sendStartMonitorMessage();
-});
+// startBtn.addEventListener("click", () => {
+//   console.log("Monitoring...");
+//   window.renderer.sendStartMonitorMessage();
+// });
 
 stopBtn.addEventListener("click", () => {
   console.log("Stopped!");
   window.renderer.sendStopMonitorMessage();
 });
 
-regBtn.addEventListener("click", () => {
-  window.renderer.sendTestMessage();
-  test.style.display = "hidden";
-  signInButton.hidden = "true";
-  backBtn.hidden = "false";
-  // console.log(signInButton);
-});
-if (submitBtn) {
-  submitBtn.addEventListener("click", async () => {
-    const userPrincipalName = await getUserName();
-    const MStoken = await getToken();
+// regBtn.addEventListener("click", () => {
+//   window.renderer.sendTestMessage();
+//   test.style.display = "hidden";
+//   signInButton.hidden = "true";
+//   backBtn.hidden = "false";
+//   // console.log(signInButton);
+// });
+// if (submitBtn) {
+//   submitBtn.addEventListener("click", async () => {
+//     const userPrincipalName = await getUserName();
+//     const MStoken = await getToken();
 
-    // Construct the URL with query parameters
-    const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
-    apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
-    apiUrl.searchParams.append("MStoken", MStoken);
+//     // Construct the URL with query parameters
+//     const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
+//     apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
+//     apiUrl.searchParams.append("MStoken", MStoken);
 
-    // Make the GET request
-    fetch(apiUrl)
-      .then((response) => {
-        console.log("Request success: ", response);
+//     // Make the GET request
+//     fetch(apiUrl)
+//       .then((response) => {
+//         console.log("Request success: ", response);
 
-        if (response.ok) {
-          // Check if the response contains appId and clientSecret
-          return response.json();
-        } else {
-          console.error("Request failed with status:", response.status);
-        }
-      })
-      .then((data) => {
-        console.log("Response data:", data);
+//         if (response.ok) {
+//           // Check if the response contains appId and clientSecret
+//           return response.json();
+//         } else {
+//           console.error("Request failed with status:", response.status);
+//         }
+//       })
+//       .then((data) => {
+//         console.log("Response data:", data);
 
-        if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
-          // Store the appId and clientSecret in the Electron store
-          setAppId(data.Data.appId);
-          setClientSecret(data.Data.clientSecret);
+//         if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
+//           // Store the appId and clientSecret in the Electron store
+//           setAppId(data.Data.appId);
+//           setClientSecret(data.Data.clientSecret);
 
-          // Now, you can access these values later in your Electron app
-          const storedAppId = getAppId();
-          const storedClientSecret = getClientSecret();
+//           // Now, you can access these values later in your Electron app
+//           const storedAppId = getAppId();
+//           const storedClientSecret = getClientSecret();
 
-          console.log("Stored appId:", storedAppId);
-          console.log("Stored clientSecret:", storedClientSecret);
+//           console.log("Stored appId:", storedAppId);
+//           console.log("Stored clientSecret:", storedClientSecret);
 
-          electronStore.delete("token");
-        } else {
-          console.error(
-            "Response data does not contain appId and clientSecret"
-          );
-        }
-      })
-      .catch((error) => console.error("Error:", error));
-  });
-}
+//           electronStore.delete("token");
+//         } else {
+//           console.error(
+//             "Response data does not contain appId and clientSecret"
+//           );
+//         }
+//       })
+//       .catch((error) => console.error("Error:", error));
+//   });
+// }
 
 const setProfile = (data) => {
   if (!data) return;

@@ -284,6 +284,7 @@ ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
 });
 
 ipcMain.on(IPC_MESSAGES.STOP_MONITORING, async () => {
+  console.log("Monitoring didn't stopped from main process");
   if (intervalId) {
     console.log("Monitoring stopped from main process");
     clearInterval(intervalId);

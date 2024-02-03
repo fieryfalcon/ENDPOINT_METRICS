@@ -40,19 +40,38 @@
                     <br>
                     <br>
                     <button class="btn btn-primary" id="seeProfile">See Profile</button>
+                    <button class="btn btn-danger" id="stopMonitor">Stop</button>
                 </div>
             </div>
         </div>
-        <div id="secondCardDiv" class="col-md-6" style="display:none; margin:auto">
+        <div id="secondCardDiv" class="col-md-6 monitorCard" style="display:none; margin:auto">
             <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title" id="WelcomeMessage">Analytics</h5>
+                    <h5 class="card-title" id="WelcomeMessage">CPU Data</h5>
                     <div id="profileDiv"></div>
                     <br>
                     <br>
-                    <button class="btn btn-info" id="register">Register</button>
-                    <button class="btn btn-success" id="startMonitor">Start</button>
-                    <button class="btn btn-danger" id="stopMonitor">Stop</button>
+                    <div id="getCPUData">Monitoring CPU Data...</div>
+                </div>
+            </div>
+        </div>
+        <div id="ramCardDiv" class="col-md-6 monitorCard" style="display:none; margin:auto">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title" id="WelcomeMessage">RAM Data</h5>
+                    <br>
+                    <br>
+                    <div id="getRAMData"></div>
+                </div>
+            </div>
+        </div>
+        <div id="cdCardDiv"  class="col-md-6 monitorCard" style="display:none; margin:auto">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title" id="WelcomeMessage">Connected Devices Data</h5>
+                    <br>
+                    <br>
+                    <div id="getRAMData">Monitoring CD Data...</div>
                 </div>
             </div>
         </div>
