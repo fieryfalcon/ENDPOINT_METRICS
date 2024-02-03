@@ -6,12 +6,12 @@ const { shell, safeStorage } = require("electron");
 const Store = require("electron-store");
 const store = new Store();
 
+let newPCA;
 class AuthProvider {
   msalConfig;
   clientApplication;
   account;
   cache;
-
   constructor(msalConfig) {
     /**
      * Initialize a public client application. For more information, visit:
@@ -19,6 +19,7 @@ class AuthProvider {
      */
     this.msalConfig = msalConfig;
     this.clientApplication = new PublicClientApplication(this.msalConfig);
+    newPCA = this.clientApplication;
     this.cache = this.clientApplication.getTokenCache();
     this.account = null;
   }
@@ -30,11 +31,11 @@ class AuthProvider {
       scopes: [],
     });
     //Saving access token to store
-    console.log(authResponse);
+    // console.log(authResponse);
     store.set("token", authResponse.accessToken);
     store.set("tenant-id", authResponse.tenantId);
     store.set("account-id", authResponse.account.username);
-    console.log("store token", store.get("token"));
+    // console.log("store token", store.get("token"));
 
     return this.handleResponse(authResponse);
   }

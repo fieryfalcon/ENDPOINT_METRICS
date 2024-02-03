@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { app, BrowserWindow, ipcMain, contextBridge } = require("electron");
+const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer } = require("electron");
 const Store = require("electron-store");
 const store = new Store();
 
@@ -100,6 +100,80 @@ ipcMain.on(IPC_MESSAGES.LOGIN, async () => {
   mainWindow.webContents.send(IPC_MESSAGES.SHOW_WELCOME_MESSAGE, account);
 });
 
+ipcMain.on(IPC_MESSAGES.LOGIN, async() => {
+  intervalId = setInterval(async () => {
+    try {
+      const dynamicData = await getDynamicCPUData();
+      logDynamicCPUData(dynamicData);
+      const staticData = await getStaticCPUData();
+      saveStaticCPUData(staticData);
+
+      const dynamicNetworkData = await getDynamicNetworkData();
+      logDynamicNetworkData(dynamicNetworkData);
+
+      const staticRAMData = await getStaticRAMData();
+      const dynamicRAMData = await getDynamicRAMData();
+      const memoryInfo = await getMemoryInfo();
+      const systemInfo = await getSystemInfo();
+      logDynamicRAMData(dynamicRAMData);
+      saveStaticRAMData(staticRAMData);
+
+      saveSystemInfoToFile();
+      saveMemoryInfoToFile();
+
+      const connectedDevicesData = await getConnectedDevicesData();
+
+      dataCache.push({
+        CPUdata: dynamicData,
+        NetworkData: dynamicNetworkData,
+        RAMData: dynamicRAMData,
+        CDData: connectedDevicesData,
+        CPUstaticData: staticData,
+        RAMstaticData: staticRAMData,
+        MemoryInfo: memoryInfo,
+        SystemInfo: systemInfo,
+        timestamp: new Date(),
+      });
+
+      if (dataCache.length >= 4) {
+        const body = JSON.stringify({
+          dataCache,
+          secretKey,
+          clientId,
+        });
+
+        fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
+          // replace with your URL
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            dataCache = [];
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      console.log(dataCache);
+      console.log(dataCache.length);
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+      mainWindow.webContents.send("update-cpu-data", dynamicData);
+      mainWindow.webContents.send("update-ram-data", dynamicRAMData);
+      mainWindow.webContents.send("update-CD-data", connectedDevicesData);
+
+      app.isRunningFirstTime = false;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, 10000);
+
+})
+
 ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {
   await authProvider.logout();
 
@@ -119,6 +193,8 @@ ipcMain.on(IPC_MESSAGES.GET_PROFILE, async () => {
   const graphResponse = await getGraphClient(tokenResponse.accessToken)
     .api(protectedResources.graphMe.endpoint)
     .get();
+
+    // onLogin(user);
 
   mainWindow.webContents.send(IPC_MESSAGES.SHOW_WELCOME_MESSAGE, account);
   mainWindow.webContents.send(IPC_MESSAGES.SET_PROFILE, graphResponse);
@@ -242,3 +318,26 @@ ipcMain.on("SUBMIT", async (param) => {
     console.log(error, "ERRor");
   }
 });
+
+
+ipcMain.on('auth-code-received', async (event, code) => {
+  const tokenRequest = {
+    code: code,
+    scopes: protectedResources.graphMe.scopes || [],
+    redirectUri: "https://graph.microsoft.com/v1.0/me",
+  };
+  console.log("kubjk");
+  try {
+    const response = await AuthProvider.getToken(tokenRequest);
+    onLogin(response.account, "login more line261");
+  } catch (error) {
+     console.error("Error:", error);
+  }
+  
+});
+
+function onLogin(user){
+  setInterval(() => {
+    console.log("User logged in: ", user);
+  }, 10000);
+}

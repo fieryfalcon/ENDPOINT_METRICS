@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld("renderer", {
       func(event, ...args)
     );
   },
+  updateCPU: (func) => {
+    ipcRenderer.on("update-cpu-data", (event, ...args) => func(event, ...args));
+  },
   sendStartMonitorMessage: () => {
     ipcRenderer.send("START_MONITORING");
   },

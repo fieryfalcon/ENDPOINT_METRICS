@@ -98,6 +98,7 @@ function saveStaticCPUData(staticData) {
   fs.writeFileSync(dataPath, JSON.stringify(selectedFields, null, 2), "utf-8");
 }
 
+
 module.exports = {
   getStaticCPUData,
   getDynamicCPUData,

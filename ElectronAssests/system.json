@@ -1,0 +1,21 @@
+{
+  "manufacturer": "LENOVO",
+  "model": "82KT",
+  "version": "IdeaPad 3 14ALC6",
+  "serial": "PF3AN16L",
+  "uuid": "ff69d738-6f98-461f-9ca4-84a93885c7aa",
+  "sku": "LENOVO_MT_82KT_BU_idea_FM_IdeaPad 3 14ALC6",
+  "virtual": false,
+  "os": "8e32ec51-ba20-4af5-b253-ba5a43eb2b99",
+  "hardware": "ff69d738-6f98-461f-9ca4-84a93885c7aa",
+  "macs": [
+    "00:e0:4c:68:30:ed"
+  ],
+  "osInfo": {
+    "platform": "win32",
+    "type": "Windows_NT",
+    "arch": "x64",
+    "release": "10.0.22631",
+    "hostname": "Ayush"
+  }
+}

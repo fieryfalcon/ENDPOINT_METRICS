@@ -1,5 +1,6 @@
 // const { net } = require("electron/main");
 
+
 const welcomeDiv = document.getElementById("WelcomeMessage");
 const signInButton = document.getElementById("signIn");
 const signOutButton = document.getElementById("signOut");
@@ -18,12 +19,12 @@ const backBtn = document.getElementById("back");
 
 async function getToken() {
   const token = await window.api.invoke("getStoreValue", "token");
-  console.log(token);
+  // console.log(token);
   return token;
 }
 async function getUserName() {
   const userName = await window.api.invoke("getStoreValue", "account-id");
-  console.log(userName);
+  // console.log(userName);
   return userName;
 }
 
@@ -58,9 +59,15 @@ window.renderer.showWelcomeMessage((event, account) => {
 
   cardDiv.style.display = "initial";
   sCardDiv.style.display = "initial";
-  welcomeDiv.innerHTML = `Welcome ${account.name}`;
+  welcomeDiv.innerHTML = `Welcome ${account.name}!`;
   signInButton.hidden = true;
   signOutButton.hidden = false;
+});
+
+window.renderer.updateCPU((event, cpuData) => {
+  if (!cpuData) {console.log("nodata ")};
+
+  console.log("CPU Data: ", cpuData);
 });
 
 window.renderer.handleProfileData((event, graphResponse) => {
@@ -73,13 +80,15 @@ window.renderer.handleProfileData((event, graphResponse) => {
   setProfile(graphResponse);
 });
 
+
+
 // window.renderer.sendTestMessage(() => {
 //     test.style.display = 'hidden';
 // })
 
 window.renderer.sendRegisterMessage((event, account) => {
   if (!account) return;
-  console.log(account);
+  // console.log(account);
 
   cardDiv.style.display = "initial";
   sCardDiv.style.display = "initial";
@@ -120,7 +129,7 @@ regBtn.addEventListener("click", () => {
   test.style.display = "hidden";
   signInButton.hidden = "true";
   backBtn.hidden = "false";
-  console.log(signInButton);
+  // console.log(signInButton);
 });
 if (submitBtn) {
   submitBtn.addEventListener("click", async () => {
