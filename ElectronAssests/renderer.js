@@ -4,13 +4,10 @@
 const welcomeDiv = document.getElementById("WelcomeMessage");
 const signInButton = document.getElementById("signIn");
 const signOutButton = document.getElementById("signOut");
-const seeProfileButton = document.getElementById("seeProfile");
 const startBtn = document.getElementById("startMonitor");
 const stopBtn = document.getElementById("stopMonitor");
 const cardDiv = document.getElementById("cardDiv");
-const sCardDiv = document.getElementById("secondCardDiv");
-const ramDiv = document.getElementById("ramCardDiv");
-const cdDiv = document.getElementById("cdCardDiv");
+
 const regBtn = document.getElementById("register");
 const profileDiv = document.getElementById("profileDiv");
 const test = document.getElementById("testBtn");
@@ -60,9 +57,6 @@ window.renderer.showWelcomeMessage((event, account) => {
   if (!account) return;
 
   cardDiv.style.display = "initial";
-  sCardDiv.style.display = "initial";
-  ramDiv.style.display = "initial";
-  cdDiv.style.display = "initial";
   welcomeDiv.innerHTML = `Welcome ${account.name}!`;
   signInButton.hidden = true;
   signOutButton.hidden = false;
@@ -70,22 +64,11 @@ window.renderer.showWelcomeMessage((event, account) => {
 
 window.renderer.updateCPU((event, cpuData) => {
   if (!cpuData) {console.log("nodata ")};
-  document.getElementById("getCPUData").textContent = JSON.stringify(cpuData);
+  document.getElementById("getCPUData").textContent = "Connection to PSA Established";
   // console.log("CPU Data: ", cpuData);
 });
 
-window.renderer.updateRAM((event, ramData) => {
-  if (!ramData) {
-    document.getElementById("getRAMData").textContent = "No Data Available";
-  }
-  document.getElementById("getRAMData").textContent = JSON.stringify(ramData);
-  // console.log("RAM Data: ", ramData);
-});
 
-window.renderer.updateCD((event, cdData) => {
-  if (!cdData) return;
-  document.getElementById("getCDData").textContent = JSON.stringify(cdData);
-});
 
 window.renderer.handleProfileData((event, graphResponse) => {
   if (!graphResponse) return;
@@ -123,9 +106,7 @@ signOutButton.addEventListener("click", () => {
   window.renderer.sendSignoutMessage();
 });
 
-seeProfileButton.addEventListener("click", () => {
-  window.renderer.sendSeeProfileMessage();
-});
+
 
 // regBtn.addEventListener("click", () => {
 //   window.renderer.sendRegisterMessage();

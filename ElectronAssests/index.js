@@ -152,14 +152,14 @@ ipcMain.on(IPC_MESSAGES.LOGIN, async() => {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log(data);
+            // console.log(data);
             dataCache = [];
           })
           .catch((error) => console.error("Error:", error));
       }
 
-      console.log(dataCache);
-      console.log(dataCache.length);
+      // console.log(dataCache);
+      // console.log(dataCache.length);
       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
       mainWindow.webContents.send("update-cpu-data", dynamicData);
@@ -211,76 +211,76 @@ ipcMain.on(IPC_MESSAGES.REGISTER, async () => {
 
 ipcMain.on(IPC_MESSAGES.START_MONITORING, async () => {
   // Monitor CPU data every 10 seconds
-  intervalId = setInterval(async () => {
-    try {
-      const dynamicData = await getDynamicCPUData();
-      logDynamicCPUData(dynamicData);
-      const staticData = await getStaticCPUData();
-      saveStaticCPUData(staticData);
+  // intervalId = setInterval(async () => {
+  //   try {
+  //     const dynamicData = await getDynamicCPUData();
+  //     logDynamicCPUData(dynamicData);
+  //     const staticData = await getStaticCPUData();
+  //     saveStaticCPUData(staticData);
 
-      const dynamicNetworkData = await getDynamicNetworkData();
-      logDynamicNetworkData(dynamicNetworkData);
+  //     const dynamicNetworkData = await getDynamicNetworkData();
+  //     logDynamicNetworkData(dynamicNetworkData);
 
-      const staticRAMData = await getStaticRAMData();
-      const dynamicRAMData = await getDynamicRAMData();
-      const memoryInfo = await getMemoryInfo();
-      const systemInfo = await getSystemInfo();
-      logDynamicRAMData(dynamicRAMData);
-      saveStaticRAMData(staticRAMData);
+  //     const staticRAMData = await getStaticRAMData();
+  //     const dynamicRAMData = await getDynamicRAMData();
+  //     const memoryInfo = await getMemoryInfo();
+  //     const systemInfo = await getSystemInfo();
+  //     logDynamicRAMData(dynamicRAMData);
+  //     saveStaticRAMData(staticRAMData);
 
-      saveSystemInfoToFile();
-      saveMemoryInfoToFile();
+  //     saveSystemInfoToFile();
+  //     saveMemoryInfoToFile();
 
-      const connectedDevicesData = await getConnectedDevicesData();
+  //     const connectedDevicesData = await getConnectedDevicesData();
 
-      dataCache.push({
-        CPUdata: dynamicData,
-        NetworkData: dynamicNetworkData,
-        RAMData: dynamicRAMData,
-        CDData: connectedDevicesData,
-        CPUstaticData: staticData,
-        RAMstaticData: staticRAMData,
-        MemoryInfo: memoryInfo,
-        SystemInfo: systemInfo,
-        timestamp: new Date(),
-      });
+  //     dataCache.push({
+  //       CPUdata: dynamicData,
+  //       NetworkData: dynamicNetworkData,
+  //       RAMData: dynamicRAMData,
+  //       CDData: connectedDevicesData,
+  //       CPUstaticData: staticData,
+  //       RAMstaticData: staticRAMData,
+  //       MemoryInfo: memoryInfo,
+  //       SystemInfo: systemInfo,
+  //       timestamp: new Date(),
+  //     });
 
-      if (dataCache.length >= 4) {
-        const body = JSON.stringify({
-          dataCache,
-          secretKey,
-          clientId,
-        });
+  //     if (dataCache.length >= 4) {
+  //       const body = JSON.stringify({
+  //         dataCache,
+  //         secretKey,
+  //         clientId,
+  //       });
 
-        fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
-          // replace with your URL
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            dataCache = [];
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+  //       fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
+  //         // replace with your URL
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body,
+  //       })
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //           console.log(data);
+  //           dataCache = [];
+  //         })
+  //         .catch((error) => console.error("Error:", error));
+  //     }
 
-      console.log(dataCache);
-      console.log(dataCache.length);
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  //     console.log(dataCache);
+  //     console.log(dataCache.length);
+  //     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-      mainWindow.webContents.send("update-cpu-data", dynamicData);
-      mainWindow.webContents.send("update-ram-data", dynamicRAMData);
-      mainWindow.webContents.send("update-CD-data", connectedDevicesData);
+  //     mainWindow.webContents.send("update-cpu-data", dynamicData);
+  //     mainWindow.webContents.send("update-ram-data", dynamicRAMData);
+  //     mainWindow.webContents.send("update-CD-data", connectedDevicesData);
 
-      app.isRunningFirstTime = false;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, 10000);
+  //     app.isRunningFirstTime = false;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }, 10000);
 });
 
 ipcMain.on(IPC_MESSAGES.STOP_MONITORING, async () => {

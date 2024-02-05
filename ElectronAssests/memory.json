@@ -1,16 +1,16 @@
 {
   "total": 20256120832,
-  "free": 7282479104,
-  "used": 12973645824,
-  "active": 12973719552,
-  "available": 7282401280,
+  "free": 10709688320,
+  "used": 9546432512,
+  "active": 9546428416,
+  "available": 10709692416,
   "buffers": 0,
   "cached": 0,
   "slab": 0,
   "buffcache": 0,
-  "swaptotal": 3087007744,
-  "swapused": 139460608,
-  "swapfree": 2947547136,
+  "swaptotal": 6196035584,
+  "swapused": 266338304,
+  "swapfree": 5929697280,
   "writeback": null,
   "dirty": null
 }

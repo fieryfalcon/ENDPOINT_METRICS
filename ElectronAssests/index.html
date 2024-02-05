@@ -12,14 +12,11 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand">Endpoint Metrics</a>
+    <nav class="navbar navbar-expand-lg px-auto navbar-dark bg-primary">
+        <a class="navbar-brand mx-auto">Endpoint Metrics</a>
         <div class="btn-group ml-auto dropleft">
             <button type="button" id="signIn" class="btn btn-secondary" aria-expanded="false">
                 Sign in
-            </button>
-            <button type="button" id="signOut" class="btn btn-success" hidden aria-expanded="false">
-                Sign out
             </button>
             <button type="button" id="back" class="btn btn-secondary" hidden aria-expanded="false">
                 Back
@@ -37,41 +34,13 @@
                     <h5 class="card-title" id="WelcomeMessage">Please sign-in to see your profile and read your mails
                     </h5>
                     <div id="profileDiv"></div>
+                    <div id="getCPUData">Establishing Connection...</div>
                     <br>
                     <br>
-                    <button class="btn btn-primary" id="seeProfile">See Profile</button>
                     <button class="btn btn-danger" id="stopMonitor">Stop</button>
-                </div>
-            </div>
-        </div>
-        <div id="secondCardDiv" class="col-md-6 monitorCard" style="display:none; margin:auto">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title" id="WelcomeMessage">CPU Data</h5>
-                    <div id="profileDiv"></div>
-                    <br>
-                    <br>
-                    <div id="getCPUData">Monitoring CPU Data...</div>
-                </div>
-            </div>
-        </div>
-        <div id="ramCardDiv" class="col-md-6 monitorCard" style="display:none; margin:auto">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title" id="WelcomeMessage">RAM Data</h5>
-                    <br>
-                    <br>
-                    <div id="getRAMData"></div>
-                </div>
-            </div>
-        </div>
-        <div id="cdCardDiv"  class="col-md-6 monitorCard" style="display:none; margin:auto">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title" id="WelcomeMessage">Connected Devices Data</h5>
-                    <br>
-                    <br>
-                    <div id="getRAMData">Monitoring CD Data...</div>
+                    <button type="button" id="signOut" class="btn btn-warning" hidden aria-expanded="false">
+                        Sign out
+                    </button>
                 </div>
             </div>
         </div>
