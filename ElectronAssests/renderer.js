@@ -1,6 +1,5 @@
 // const { net } = require("electron/main");
 
-
 const welcomeDiv = document.getElementById("WelcomeMessage");
 const signInButton = document.getElementById("signIn");
 const signOutButton = document.getElementById("signOut");
@@ -10,6 +9,7 @@ const cardDiv = document.getElementById("cardDiv");
 
 const regBtn = document.getElementById("register");
 const profileDiv = document.getElementById("profileDiv");
+const getCPUData = document.getElementById("getCPUData");
 const test = document.getElementById("testBtn");
 const textBox = document.getElementById("textBox");
 const submitBtn = document.getElementById("submitBtn");
@@ -42,33 +42,109 @@ async function setAppId(token) {
 }
 
 async function getClientSecret() {
-  const clientSecret = await window.api.invoke("getStoreValue", "ClientSecret");
-  console.log(clientSecret);
-  return clientSecret;
+  try {
+    const clientSecret = await window.api.invoke(
+      "getStoreValue",
+      "clientSecret"
+    );
+    console.log("ClientSecret:", clientSecret);
+    return clientSecret;
+  } catch (error) {
+    console.error("Error fetching clientSecret:", error);
+    // Handle the error appropriately
+  }
 }
 
 async function getAppId() {
-  const appId = await window.api.invoke("getStoreValue", "AppId");
-  console.log(appId);
-  return appId;
+  try {
+    const appId = await window.api.invoke("getStoreValue", "appId");
+    console.log("AppId:", appId);
+    return appId;
+  } catch (error) {
+    console.error("Error fetching appId:", error);
+    // Handle the error appropriately
+  }
 }
+
+async function sendRequestToWebsite() {
+  try {
+    const appId = await getAppId();
+    const clientSecret = await getClientSecret();
+    const url = "http://localhost:5000/endpointMetrics/status";
+    const queryParams = new URLSearchParams({
+      appId: appId,
+      clientSecret: clientSecret,
+    });
+
+    const fullUrl = `${url}?${queryParams.toString()}`;
+
+    const response = await fetch(fullUrl);
+    if (response.ok) {
+      document.getElementById("getCPUData").textContent =
+        "Connection to PSA Established";
+      return true;
+    } else {
+      console.error("Request to website failed");
+      document.getElementById("getCPUData").textContent =
+        "Failed to connect to PSA ... Trying Again in 60 seconds";
+      return false;
+    }
+  } catch (error) {
+    console.error("Error sending request to website:", error);
+  }
+}
+
+const interval = 60 * 1000;
+
+async function sendRequestPeriodically() {
+  sendRequestToWebsite();
+  setInterval(sendRequestToWebsite, interval);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const storedAppId = await getAppId();
+    const storedClientSecret = await getClientSecret();
+    const account = await getUserName();
+
+    console.log("Stored appId:", storedAppId);
+    console.log("Stored clientSecret:", storedClientSecret);
+
+    if (storedAppId && storedClientSecret) {
+      window.renderer.sendTestMessage();
+      console.log("Stored appId and clientSecret found");
+      signInButton.hidden = true;
+      signOutButton.hidden = false;
+      stopBtn.hidden = false;
+      sendRequestPeriodically();
+      profileDiv.innerHTML = `${account}`;
+    } else {
+      signInButton.hidden = false;
+      signOutButton.hidden = true;
+      stopBtn.hidden = true;
+      profileDiv.innerHTML = "Please sign in to continue";
+      getCPUData.innerHTML = "";
+    }
+  } catch (error) {
+    console.error("Error in DOMContentLoaded:", error);
+  }
+});
 
 window.renderer.showWelcomeMessage((event, account) => {
   if (!account) return;
 
-  cardDiv.style.display = "initial";
-  welcomeDiv.innerHTML = `Welcome ${account.name}!`;
   signInButton.hidden = true;
   signOutButton.hidden = false;
+  stopBtn.hidden = false;
+  sendRequestPeriodically();
+  profileDiv.innerHTML = `${account.name}`;
 });
 
 window.renderer.updateCPU((event, cpuData) => {
-  if (!cpuData) {console.log("nodata ")};
-  document.getElementById("getCPUData").textContent = "Connection to PSA Established";
-  // console.log("CPU Data: ", cpuData);
+  if (!cpuData) {
+    console.log("nodata ");
+  }
 });
-
-
 
 window.renderer.handleProfileData((event, graphResponse) => {
   if (!graphResponse) return;
@@ -80,102 +156,31 @@ window.renderer.handleProfileData((event, graphResponse) => {
   setProfile(graphResponse);
 });
 
-
-
-// window.renderer.sendTestMessage(() => {
-//     test.style.display = 'hidden';
-// })
-
-window.renderer.sendRegisterMessage((event, account) => {
-  if (!account) return;
-  // console.log(account);
-
-  cardDiv.style.display = "initial";
-  sCardDiv.style.display = "initial";
-  welcomeDiv.innerHTML = `Welcome ${account.name} to Register`;
-  signInButton.hidden = true;
-  signOutButton.hidden = false;
-});
-
-// UI event handlers
-signInButton.addEventListener("click", () => {
+signInButton.addEventListener("click", async () => {
   window.renderer.sendLoginMessage();
+
+  console.log("Sign in clicked");
+  const user = await getUserName();
+  const token = await getToken();
+
+  console.log("User:", user);
+  console.log("Token:", token);
 });
 
 signOutButton.addEventListener("click", () => {
   window.renderer.sendSignoutMessage();
 });
 
-
-
-// regBtn.addEventListener("click", () => {
-//   window.renderer.sendRegisterMessage();
-// });
-
-// startBtn.addEventListener("click", () => {
-//   console.log("Monitoring...");
-//   window.renderer.sendStartMonitorMessage();
-// });
-
-stopBtn.addEventListener("click", () => {
+stopBtn.addEventListener("click", async () => {
   console.log("Stopped!");
   window.renderer.sendStopMonitorMessage();
+
+  const user = await getUserName();
+  const token = await getToken();
+
+  console.log("User:", user);
+  console.log("Token:", token);
 });
-
-// regBtn.addEventListener("click", () => {
-//   window.renderer.sendTestMessage();
-//   test.style.display = "hidden";
-//   signInButton.hidden = "true";
-//   backBtn.hidden = "false";
-//   // console.log(signInButton);
-// });
-// if (submitBtn) {
-//   submitBtn.addEventListener("click", async () => {
-//     const userPrincipalName = await getUserName();
-//     const MStoken = await getToken();
-
-//     // Construct the URL with query parameters
-//     const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
-//     apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
-//     apiUrl.searchParams.append("MStoken", MStoken);
-
-//     // Make the GET request
-//     fetch(apiUrl)
-//       .then((response) => {
-//         console.log("Request success: ", response);
-
-//         if (response.ok) {
-//           // Check if the response contains appId and clientSecret
-//           return response.json();
-//         } else {
-//           console.error("Request failed with status:", response.status);
-//         }
-//       })
-//       .then((data) => {
-//         console.log("Response data:", data);
-
-//         if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
-//           // Store the appId and clientSecret in the Electron store
-//           setAppId(data.Data.appId);
-//           setClientSecret(data.Data.clientSecret);
-
-//           // Now, you can access these values later in your Electron app
-//           const storedAppId = getAppId();
-//           const storedClientSecret = getClientSecret();
-
-//           console.log("Stored appId:", storedAppId);
-//           console.log("Stored clientSecret:", storedClientSecret);
-
-//           electronStore.delete("token");
-//         } else {
-//           console.error(
-//             "Response data does not contain appId and clientSecret"
-//           );
-//         }
-//       })
-//       .catch((error) => console.error("Error:", error));
-//   });
-// }
 
 const setProfile = (data) => {
   if (!data) return;

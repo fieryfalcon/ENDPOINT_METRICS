@@ -17,7 +17,7 @@ async function saveMemoryInfoToFile() {
     if (memoryInfo) {
       const dataPath = "memory.json";
       fs.writeFileSync(dataPath, JSON.stringify(memoryInfo, null, 2), "utf-8");
-      console.log("Memory information saved to memory.json");
+      // console.log("Memory information saved to memory.json");
     }
   } catch (error) {
     console.error("Error saving memory information:", error);

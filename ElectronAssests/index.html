@@ -1,49 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
     <title>Endpoint Metrics</title>
 
     <!-- adding Bootstrap 4 for UI components  -->
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+  </head>
 
-<body>
+  <body>
     <nav class="navbar navbar-expand-lg px-auto navbar-dark bg-primary">
-        <a class="navbar-brand mx-auto">Endpoint Metrics</a>
-        <div class="btn-group ml-auto dropleft">
-            <button type="button" id="signIn" class="btn btn-secondary" aria-expanded="false">
-                Sign in
-            </button>
-            <button type="button" id="back" class="btn btn-secondary" hidden aria-expanded="false">
-                Back
-            </button>
-        </div>
+      <a class="navbar-brand mx-auto">Endpoint Metrics</a>
+      <div class="btn-group ml-auto dropleft">
+        <button
+          type="button"
+          id="back"
+          class="btn btn-secondary"
+          hidden
+          aria-expanded="false"
+        >
+          Back
+        </button>
+      </div>
     </nav>
-    <br>
+    <br />
     <!-- <h5 class="card-header text-center">Click on Sign In</h5> -->
     <!-- <button class="btn btn-primary" id="testBtn">Test</button> -->
-    <br>
-    <div class="row" style="margin:auto">
-        <div id="cardDiv" class="col-md-6" style="display:none; margin:auto">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title" id="WelcomeMessage">Please sign-in to see your profile and read your mails
-                    </h5>
-                    <div id="profileDiv"></div>
-                    <div id="getCPUData">Establishing Connection...</div>
-                    <br>
-                    <br>
-                    <button class="btn btn-danger" id="stopMonitor">Stop</button>
-                    <button type="button" id="signOut" class="btn btn-warning" hidden aria-expanded="false">
-                        Sign out
-                    </button>
-                </div>
-            </div>
-        </div>
+    <br />
+    <div class="row" style="margin: auto">
+      <div
+        id="profileDiv"
+        style="display: block; justify-content: center; text-align: center"
+      ></div>
+      <div
+        id="getCPUData"
+        style="text-align: center; font-size: larger; margin-top: 15px"
+      ></div>
+      <div style="display: flex; flex-direction: column; padding-top: 20px">
+        <button
+          type="button"
+          style="display: block; width: 100px; margin: auto; margin-top: 15px"
+          id="signIn"
+          class="btn btn-secondary"
+          aria-expanded="false"
+        >
+          Sign in
+        </button>
+        <button
+          class="btn btn-danger"
+          style="display: block; width: 100px; margin: auto; margin-top: 15px"
+          id="stopMonitor"
+        >
+          Stop
+        </button>
+        <button
+          type="button"
+          id="signOut"
+          style="display: block; width: 100px; margin: auto; margin-top: 15px"
+          class="btn btn-warning"
+          aria-expanded="false"
+        >
+          Sign out
+        </button>
+      </div>
     </div>
 
     <!-- importing bootstrap.js and supporting js libraries -->
@@ -53,7 +80,5 @@
 
     <!-- importing app scripts | load order is important -->
     <script src="./renderer.js"></script>
-
-</body>
-
+  </body>
 </html>

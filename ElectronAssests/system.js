@@ -29,7 +29,7 @@ async function saveSystemInfoToFile() {
   const systemInfo = await getSystemInfo();
   if (systemInfo !== null) {
     const dataPath = "system.json";
-    console.log("Saving system information to:", dataPath);
+
     fs.writeFileSync(dataPath, JSON.stringify(systemInfo, null, 2), "utf-8");
   }
 }

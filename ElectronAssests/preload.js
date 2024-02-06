@@ -17,6 +17,9 @@ contextBridge.exposeInMainWorld("renderer", {
   sendLoginMessage: () => {
     ipcRenderer.send("LOGIN");
   },
+  sendTestMessage: () => {
+    ipcRenderer.send("SKIP_LOGIN");
+  },
   sendSignoutMessage: () => {
     ipcRenderer.send("LOGOUT");
   },
@@ -25,6 +28,9 @@ contextBridge.exposeInMainWorld("renderer", {
   },
   handleProfileData: (func) => {
     ipcRenderer.on("SET_PROFILE", (event, ...args) => func(event, ...args));
+  },
+  handleSignInNext: (func) => {
+    ipcRenderer.on("SIGNIN_NEXT", (event, ...args) => func(event, ...args));
   },
   showWelcomeMessage: (func) => {
     ipcRenderer.on("SHOW_WELCOME_MESSAGE", (event, ...args) =>
@@ -49,9 +55,9 @@ contextBridge.exposeInMainWorld("renderer", {
   sendRegisterMessage: () => {
     ipcRenderer.on("REGISTER", (event, ...args) => func(event, ...args));
   },
-  sendTestMessage: () => {
-    ipcRenderer.send("TEST");
-  },
+  // sendTestMessage: () => {
+  //   ipcRenderer.send("TEST");
+  // },
   sendSubmitMessage: () => {
     ipcRenderer.on("SUBMIT", (event, ...args) => func(event, ...args));
   },

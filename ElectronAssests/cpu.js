@@ -93,11 +93,10 @@ function saveStaticCPUData(staticData) {
     physicalCores: staticData.physicalCores,
     processors: staticData.processors,
   };
-  console.log("Saving static CPU data to:", dataPath);
+  // console.log("Saving static CPU data to:", dataPath);
 
   fs.writeFileSync(dataPath, JSON.stringify(selectedFields, null, 2), "utf-8");
 }
-
 
 module.exports = {
   getStaticCPUData,

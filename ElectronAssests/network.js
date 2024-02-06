@@ -64,8 +64,8 @@ async function calculateJitterAndLatency() {
   const latencyAverage =
     latencyValues.length > 0 ? latencySum / latencyValues.length : 0;
 
-  console.log("Jitter:", jitterAverage);
-  console.log("Latency:", latencyAverage);
+  // console.log("Jitter:", jitterAverage);
+  // console.log("Latency:", latencyAverage);
 
   return { jitter: jitterAverage || 0, latency: latencyAverage || 0 };
 }
@@ -74,6 +74,8 @@ async function getDynamicNetworkData() {
   try {
     const inetLatency = await si.inetLatency();
     const Interfaces = await si.networkInterfaces("default");
+    const systemInfo = await si.system();
+    const uuid = systemInfo.uuid;
     // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
     const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
@@ -85,6 +87,7 @@ async function getDynamicNetworkData() {
     return {
       Interfaces: Interfaces,
       inetLatency: inetLatency,
+      uuid: uuid,
       iface: networkStats[0].iface,
       rx_bytes: networkStats[0].rx_bytes || 0,
       rx_dropped: networkStats[0].rx_dropped || 0,

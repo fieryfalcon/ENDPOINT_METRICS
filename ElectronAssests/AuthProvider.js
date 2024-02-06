@@ -26,16 +26,55 @@ class AuthProvider {
 
   async login() {
     const authResponse = await this.getToken({
-      // If there are scopes that you would like users to consent up front, add them below
-      // by default, MSAL will add the OIDC scopes to every token request, so we omit those here
       scopes: [],
     });
-    //Saving access token to store
-    // console.log(authResponse);
+
     store.set("token", authResponse.accessToken);
     store.set("tenant-id", authResponse.tenantId);
     store.set("account-id", authResponse.account.username);
-    // console.log("store token", store.get("token"));
+
+    console.log(authResponse.accessToken);
+
+    const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
+    apiUrl.searchParams.append(
+      "userPrincipalName",
+      authResponse.account.username
+    );
+    apiUrl.searchParams.append("MStoken", authResponse.accessToken);
+    apiUrl.searchParams.append("tenantid", authResponse.tenantId);
+
+    fetch(apiUrl)
+      .then((response) => {
+        console.log("Request : ", response);
+
+        if (response.ok) {
+          return response.json();
+        } else {
+          console.error("Request failed with status:", response.status);
+        }
+      })
+      .then((data) => {
+        console.log("Response data:", data);
+
+        if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
+          // Store the appId and clientSecret in the Electron store
+          store.set("appId", data.Data.appId);
+          store.set("clientSecret", data.Data.clientSecret);
+
+          const storedAppId = store.get("appId");
+          const storedClientSecret = store.get("clientSecret");
+
+          console.log("Stored appId:", storedAppId);
+          console.log("Stored clientSecret:", storedClientSecret);
+
+          // electronStore.delete("token");
+        } else {
+          console.error(
+            "Response data does not contain appId and clientSecret"
+          );
+        }
+      })
+      .catch((error) => console.error("Error:", error));
 
     return this.handleResponse(authResponse);
   }
